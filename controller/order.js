@@ -1,5 +1,5 @@
-const{getAllOrder, getOrderById,postOrder} = require("../model/order")
-const{postHistory,patchHistory} = require("../model/history")
+const{getAllOrder, getOrderById,postOrder,getTotalOrder,getOrderByHistory} = require("../model/order")
+const{getHistoryById,postHistory,patchHistory} = require("../model/history")
 const {getProductById} = require ("../model/product")
 const helper = require("../helper/indexhlp");
 const { request, response } = require("express");
@@ -40,25 +40,36 @@ module.exports = {
                 }
                 const result = await postHistory(setData)
 
-            let orderData = request.body.orders
-            let data = orderData.map(async(item) => {
-                setDataOrder = {
-                    history_id : result.history_id,
+                let historyId = result.history_id  
+                let orders = request.body.orders
+                let data = orders.map(async(item) => {
+                const setDataOrder = {
+                    history_id : historyId,
                     product_id : item.product_id,
                     order_qty : item.order_qty,
                     total_price : item.total_price * item.order_qty
                 }
-                resultOrder = await postOrder(setDataOrder)
-                // console.log(resultOrder)
-                return helper.response(response, 201, "Order Created",resultOrder)
-            })
+                const resultOrder = await postOrder(setDataOrder)
 
-            // patchHistory
-            // historyId = result.history_id
-            // const setDataHist = {
-            //     history_subTotal : history_subTotal,
-            // }
-         
+                const totalPrice = await getTotalOrder(historyId)
+                patchHist = {
+                    history_subTotal : totalPrice + (totalPrice * 10/100)
+                }
+    
+                
+                let fromHistory = await getHistoryById(historyId)
+                let subTotal = await patchHistory(patchHist,historyId)
+                let Order = await getOrderByHistory(historyId)
+                let info ={
+                    Invoices : fromHistory[0].invoice,
+                    Id : fromHistory[0].history_id,
+                    Order,
+                    totalPrice,
+                    subTotal
+                }
+                // console.log(info)
+                return helper.response(response, 201, "Yap, Order Created",info)
+            })         
         } catch (error) {
             // console.log(error)
             return helper.response(response, 400, "Bad Request",error)

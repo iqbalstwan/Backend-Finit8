@@ -4,9 +4,9 @@ const { request, response } = require("express");
 const history = require("../model/history");
 
 module.exports = {
-    getAllHistory:async (request, response) =>{
+    getAllHistory: async (request, response) =>{
         try {
-            const result = await getAllHistory();
+            const result = await getAllHistory()
             return helper.response(response, 200, "Success get History",result)
         } catch (error) {
             console.log(error)
