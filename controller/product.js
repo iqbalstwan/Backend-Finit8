@@ -1,13 +1,59 @@
-const{getAllProduct, getProductById,postProduct,patchProduct,deleteProduct} = require("../model/product")
+const{getProduct,getProductCount, getProductById,getProductByName,postProduct,patchProduct,deleteProduct} = require("../model/product")
 const helper = require("../helper/indexhlp");
 const { request, response } = require("express");
+const qs = require("querystring")
 const product = require("../model/product");
+const { get } = require("http");
+
+const getPrevLink = (page, currentQuery) =>{
+    if (page > 1) {
+        const generatePage = {
+            page: page - 1
+        }
+        const resultPrevLink = {...currentQuery,...generatePage}
+        return qs.stringify(resultPrevLink)
+        // console.log(qs.stringify(resultPrevLink)) //qs.stringify mengeluarkan object menjadi string
+    } else {
+        return null
+    }
+}
+
+const getNextLink = (page, totalPage, currentQuery) =>{
+    if (page < totalPage) {
+        const generatePage = {
+            page: page + 1
+        }
+        const resultNextLink = {...currentQuery,...generatePage}
+        return qs.stringify(resultNextLink)
+        // console.log(qs.stringify(resultPrevLink)) //qs.stringify mengeluarkan object menjadi string
+    } else {
+        return null
+    }
+}
 
 module.exports = {
     getAllProduct:async (request, response) =>{
+        let {page, limit, search, sort} = request.query
+        page = parseInt(page)
+        limit = parseInt(limit)
+        let totalData = await getProductCount()
+        let totalPage = Math.ceil(totalData / limit)
+        let offset = (page * limit) - limit
+        let prevLink = getPrevLink(page, request.query)
+        let nextLink = getNextLink(page, totalPage, request.query)
+        const pageInfo = {
+            page, //page : page
+            totalPage,
+            limit,
+            totalData,
+            prevLink: prevLink && `http://127.0.0.1:3001/product? ${prevLink}`,
+            nextLink: nextLink && `http://127.0.0.1:3001/product? ${nextLink}`
+        }
+        // console.log(pageInfo)
         try {
-            const result = await getAllProduct();
-            return helper.response(response, 200, "Succes get product",result)
+            const result = await getProduct(search,sort,limit,offset);
+            console.log(result)
+            return helper.response(response, 200, "Succes get product",result, pageInfo)
         } catch (error) {
             return helper.response(response, 400, "Bad Request",error)          
         }
@@ -26,6 +72,22 @@ module.exports = {
            
         } catch (error) {
             return helper.response(response, 400, "Bad Request",error)
+        }
+    },
+
+    getProductByName: async (request, response) => {
+        try {
+            const { keyword } = request.params
+            const result = await getProductByName(keyword)
+            if (result.length > 0) {
+                return helper.response(response, 201, 'Success Get Product By Name', result)
+            } else {
+                return helper.response(response, 404, `Product ${name} Not Found`, error)
+            }
+            // console.log(result)
+        } catch (error) {
+            // return helper.response(response, 400, 'Bad Request', error)
+            console.log(error)
         }
     },
 

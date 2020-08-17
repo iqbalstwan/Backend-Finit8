@@ -2,16 +2,34 @@ const connection = require("../config/mysql")
 const { getProductById } = require("../controller/product")
 
 module.exports ={
-    getAllProduct:() => {
+    getProduct:(search,sort,limit,offset) => {
         return new Promise((resolve,reject)=>{
-            connection.query(`SELECT * FROM product`,(error,result)=>{
+            connection.query(`SELECT * FROM product WHERE product_name LIKE ? ORDER BY ${sort} LIMIT ? OFFSET ?`,[search,limit,offset],(error,result)=>{
                 !error ? resolve(result) : reject(new Error(error))
+            })
+        })
+    },
+    getProductCount: () =>{
+        return new Promise((resolve,reject)=>{
+            connection.query("SELECT COUNT(*) as total FROM product", (error,result)=>{
+                !error ? resolve(result[0].total) : reject(new Error(error))
             })
         })
     },
         getProductById: (id) =>{
             return new Promise((resolve,reject)=>{
                 connection.query("SELECT * FROM product WHERE product_id = ?",id,(error,result)=>{
+                    !error ? resolve(result) : reject(new Error(error))
+                })
+            })
+        },
+        getProductByName: (keyword) => {
+            return new Promise((resolve, reject) => {
+                connection.query(`
+                SELECT product.product_id, category.category_name, product.product_name, product.product_price, product.product_created_at, product_update_at 
+                FROM product 
+                INNER JOIN category ON product.category_id = category.category_id 
+                WHERE product.product_name LIKE ?`, `%${keyword}%`, (error, result) => {
                     !error ? resolve(result) : reject(new Error(error))
                 })
             })

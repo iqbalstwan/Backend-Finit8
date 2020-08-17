@@ -4,7 +4,7 @@ const { getCategoryById } = require("../controller/category")
 module.exports ={
     getAllCategory:() => {
         return new Promise((resolve,reject)=>{
-            connection.query(`SELECT * FROM category`,(error,result)=>{
+            connection.query("SELECT * FROM category",(error,result)=>{
                 !error ? resolve(result) : reject(new Error(error))
             })
         })
