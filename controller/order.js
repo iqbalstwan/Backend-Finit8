@@ -49,7 +49,7 @@ module.exports = {
                     total_price : item.total_price * item.order_qty
                 }
                 resultOrder = await postOrder(setDataOrder)
-                console.log(resultOrder)
+                // console.log(resultOrder)
                 return helper.response(response, 201, "Order Created",resultOrder)
             })
 
