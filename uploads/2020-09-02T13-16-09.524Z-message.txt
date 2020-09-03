@@ -1,0 +1,114 @@
+<div>
+              <b-button
+                v-b-modal.modal-1
+                style="background-color:transparent;border:none"
+                ><img src="../assets/img/add.png"
+              /></b-button>
+              <b-modal id="modal-1" title="" :hide-footer="true">
+                <b-alert :show="alert">{{ isMsg }}</b-alert>
+                <form v-on:submit.prevent="addProduct">
+                  <b-form-group
+                    id="input-group-1"
+                    label="Product Name:"
+                    label-for="input-1"
+                  >
+                    <b-form-input
+                      id="input-1"
+                      v-model="form.product_name"
+                      type="text"
+                      required
+                      placeholder="Input Product Name"
+                    ></b-form-input>
+                  </b-form-group>
+
+                  <b-form-group
+                    id="input-group-2"
+                    label="Price:"
+                    label-for="input-2"
+                  >
+                    <b-form-input
+                      id="input-2"
+                      v-model="form.product_price"
+                      required
+                      placeholder="Input Price"
+                    ></b-form-input>
+                  </b-form-group>
+
+                  <b-form-group
+                    id="input-group-3"
+                    label="Category Id:"
+                    label-for="input-3"
+                  >
+                    <b-form-input
+                      id="input-3"
+                      v-model="form.category_id"
+                      required
+                      placeholder="Input Category Id"
+                    ></b-form-input>
+                  </b-form-group>
+
+                  <b-form-group
+                    id="input-group-4"
+                    label="Product Status:"
+                    label-for="input-4"
+                  >
+                    <b-form-select
+                      id="input-4"
+                      v-model="form.product_status"
+                      :options="status"
+                      required
+                    ></b-form-select>
+                  </b-form-group>
+                  <button type="submit" class="btn-pink" v-show="!isUpdate">
+                    Add
+                  </button>
+                  <button
+                    type="submit"
+                    class="btn-pink"
+                    v-show="isUpdate"
+                    @click="patchProduct()"
+                  >
+                    Update
+                  </button>
+                </form>
+              </b-modal>
+            </div>
+          </div>
+          <div class="col-md-7 menu">
+            <b-row>
+              <b-col cols="12">
+                <div>
+                  <select v-model="sort" @change="get_product()">
+                    <option value="">Sort by</option>
+                    <option value="product_name">Name</option>
+                    <option value="category_id">Category</option>
+                    <option value="product_price">Price</option>
+                    <option value="product_created_at DESC">Date</option>
+                  </select>
+                </div>
+              </b-col>
+              <hr />
+              <b-col
+                col
+                lg="4"
+                sm="12"
+                v-for="(item, index) in products"
+                :key="index"
+              >
+                <div class="counting" @increment="incrementCount()">
+                  <div class="select-image" v-if="checkCart(item)">
+                    <img
+                      style="width:40px;height:50px;text-align:center;margin-left:105px;margin-top:60px"
+                      src="../assets/img/tick (1).png"
+                      class="select-icon"
+                      alt=""
+                    />
+                  </div>
+                  <img src="../assets/img/redvelvet.png" alt="" />
+                  <h4>{{ item.product_name }}</h4>
+                  <p>Rp. {{ item.product_price }}</p>
+                  <b-icon-cart3 v-on:click="addToCart(item)">Add</b-icon-cart3>
+                  <!-- modal Update -->
+                  <b-button v-b-modal.modal-1 v-on:click="setProduct(item)"
+                    >Launch demo modal</b-button
+                  >
