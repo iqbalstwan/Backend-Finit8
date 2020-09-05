@@ -2,11 +2,25 @@ const connection = require("../config/mysql");
 // const { getHistoryById } = require("../controller/history")
 
 module.exports = {
-  getAllHistory: () => {
+  getAllHistory: (search, sort, limit, offset) => {
     return new Promise((resolve, reject) => {
-      connection.query("SELECT * FROM history", (error, result) => {
-        !error ? resolve(result) : reject(new Error(error));
-      });
+      connection.query(
+        `SELECT * FROM history WHERE history_id LIKE ? ORDER BY ${sort} LIMIT ? OFFSET ?`,
+        [search, limit, offset],
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error));
+        }
+      );
+    });
+  },
+  getHistoryCount: () => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        "SELECT COUNT(*) as total FROM history",
+        (error, result) => {
+          !error ? resolve(result[0].total) : reject(new Error(error));
+        }
+      );
     });
   },
   getHistoryById: (id) => {

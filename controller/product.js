@@ -47,20 +47,20 @@ module.exports = {
   getAllProduct: async (request, response) => {
     let { page, limit, search, sort } = request.query;
 
-    if (search === undefined || search === null || search === "") {
+    if (search === undefined || search === "") {
       search = "%";
     } else {
       search = "%" + search + "%";
     }
-    if (sort === undefined || sort === null || sort === "") {
+    if (sort === undefined || sort === "") {
       sort = `product_id`;
     }
-    if (page === undefined || page === null || page === "") {
+    if (page === undefined || page === "") {
       page = parseInt(1);
     } else {
       page = parseInt(page);
     }
-    if (limit === undefined || limit === null || limit === "") {
+    if (limit === undefined || limit === "") {
       limit = parseInt(9);
     } else {
       limit = parseInt(limit);

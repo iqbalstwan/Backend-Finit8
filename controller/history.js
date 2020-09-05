@@ -1,5 +1,6 @@
 const {
   getAllHistory,
+  getHistoryCount,
   getHistoryById,
   getHistoryDay,
   getHistoryWeek,
@@ -13,25 +14,107 @@ const helper = require("../helper/indexhlp");
 const { request, response } = require("express");
 const { getOrderByHistory } = require("../model/order");
 const history = require("../model/history");
+const qs = require("querystring");
 
 const redis = require("redis");
 const client = redis.createClient();
 
+const getPrevLink = (page, currentQuery) => {
+  if (page > 1) {
+    const generatePage = {
+      page: page - 1,
+    };
+    const resultPrevLink = { ...currentQuery, ...generatePage };
+    return qs.stringify(resultPrevLink);
+    // console.log(qs.stringify(resultPrevLink)) //qs.stringify mengeluarkan object menjadi string
+  } else {
+    return null;
+  }
+};
+
+const getNextLink = (page, totalPage, currentQuery) => {
+  if (page < totalPage) {
+    const generatePage = {
+      page: page + 1,
+    };
+    const resultNextLink = { ...currentQuery, ...generatePage };
+    return qs.stringify(resultNextLink);
+    // console.log(qs.stringify(resultPrevLink)) //qs.stringify mengeluarkan object menjadi string
+  } else {
+    return null;
+  }
+};
 module.exports = {
   getAllHistory: async (request, response) => {
+    let { page, limit, search, sort } = request.query;
+
+    if (search === undefined || search === "") {
+      search = "%";
+    } else {
+      search = "%" + search + "%";
+    }
+    if (sort === undefined || sort === "") {
+      sort = `history_id`;
+    }
+    if (page === undefined || page === "") {
+      page = parseInt(1);
+    } else {
+      page = parseInt(page);
+    }
+    if (limit === undefined || limit === "") {
+      limit = parseInt(9);
+    } else {
+      limit = parseInt(limit);
+    }
+
+    page = parseInt(page);
+    limit = parseInt(limit);
+    let totalData = await getHistoryCount();
+    let totalPage = Math.ceil(totalData / limit);
+    let offset = page * limit - limit;
+    let prevLink = getPrevLink(page, request.query);
+    let nextLink = getNextLink(page, totalPage, request.query);
+    const pageInfo = {
+      page, //page : page
+      totalPage,
+      limit,
+      totalData,
+      prevLink: prevLink && `http://127.0.0.1:3001/history? ${prevLink}`,
+      nextLink: nextLink && `http://127.0.0.1:3001/history? ${nextLink}`,
+    };
     try {
-      let result = await getAllHistory();
-      client.set(
-        `gethistory:${JSON.stringify(request.query)}`,
-        JSON.stringify(result)
-      );
-      for (let i = 0; i < result.length; i++) {
-        result[i].orders = await getOrderByHistory(result[i].history_id);
+      const result = await getAllHistory(search, sort, limit, offset);
+      if (result.length > 0) {
+        const newResult = {
+          data: result,
+          page: pageInfo,
+        };
+        client.set(
+          `gethistory:${JSON.stringify(request.query)}`,
+          JSON.stringify(newResult)
+        );
+        for (let i = 0; i < result.length; i++) {
+          result[i].orders = await getOrderByHistory(result[i].history_id);
+          return helper.response(
+            response,
+            200,
+            "Success get History",
+            result,
+            pageInfo
+          );
+        }
+      } else {
+        return helper.response(
+          response,
+          404,
+          "History not found",
+          result,
+          pageInfo
+        );
       }
-      return helper.response(response, 200, "Success get History", result);
     } catch (error) {
-      // console.log(error)
-      return helper.response(response, 400, "Bad Request", error);
+      console.log(error);
+      // return helper.response(response, 400, "Bad Request", error);
     }
   },
   getHistoryById: async (request, response) => {
