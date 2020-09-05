@@ -16,11 +16,17 @@ const { request, response } = require("express");
 const order = require("../model/order");
 const { patch } = require("../routes/order");
 
+const redis = require("redis");
+const client = redis.createClient();
+
 module.exports = {
   getAllOrder: async (request, response) => {
     try {
       const result = await getAllOrder();
-      // console.log(result)
+      client.set(
+        `getorder:${JSON.stringify(request.query)}`,
+        JSON.stringify(result)
+      );
       return helper.response(response, 200, "Success get Order", result);
     } catch (error) {
       return helper.response(response, 400, "Bad Request", error);
@@ -30,6 +36,7 @@ module.exports = {
     try {
       const { id } = request.params;
       const result = await getOrderById(id);
+      client.setex(`getorderbyid:${id}`, 3600, JSON.stringify(result));
       if (result.length > 0) {
         return helper.response(
           response,

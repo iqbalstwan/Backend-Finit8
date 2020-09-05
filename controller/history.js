@@ -14,10 +14,17 @@ const { request, response } = require("express");
 const { getOrderByHistory } = require("../model/order");
 const history = require("../model/history");
 
+const redis = require("redis");
+const client = redis.createClient();
+
 module.exports = {
   getAllHistory: async (request, response) => {
     try {
       let result = await getAllHistory();
+      client.set(
+        `gethistory:${JSON.stringify(request.query)}`,
+        JSON.stringify(result)
+      );
       for (let i = 0; i < result.length; i++) {
         result[i].orders = await getOrderByHistory(result[i].history_id);
       }
@@ -32,7 +39,11 @@ module.exports = {
       //    const id = request.params.id
       //sama aja
       const { id } = request.params;
-      const result = await getHistoryById(id);
+      let result = await getHistoryById(id);
+      client.setex(`gethistorybyid:${id}`, 3600, JSON.stringify(result));
+      for (let i = 0; i < result.length; i++) {
+        result[i].orders = await getOrderByHistory(result[i].history_id);
+      }
       if (result.length > 0) {
         return helper.response(
           response,

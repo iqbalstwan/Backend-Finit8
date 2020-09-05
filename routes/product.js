@@ -7,41 +7,30 @@ const {
   patchProduct,
   deleteProduct,
 } = require("../controller/product");
-const { authorization } = require("../middleware/author");
+
+//MIDDLEWARE
+const { adminAuthor, generalAuthor } = require("../middleware/author");
 const {
+  getRedisProduct,
   getProductByIdRedis,
-  clearDataProductRedis,
+  clearProductRedis,
+  clearDataRedis,
 } = require("../middleware/redis");
-const multer = require("multer");
-const multerHelp = require("../middleware/multerHelp");
-
-//upload gambar
-const storage = multer.diskStorage({
-  destination: (request, file, callback) => {
-    callback(null, "./uploads/");
-  },
-  filename: (request, file, callback) => {
-    callback(
-      null,
-      new Date().toISOString().replace(/:/g, "-") + "-" + file.originalname
-    );
-  },
-});
-
-let upload = multer({ storage: storage, fileFilter: multerHelp.imageFilter });
+// const multer = require("multer");
+const uploadImage = require("../middleware/multerHelp");
 
 //GET
-router.get("/", authorization, getAllProduct);
-router.get("/:id", authorization, getProductById);
-router.get("/:id", authorization, getProductByIdRedis, getProductById);
+router.get("/", generalAuthor, getRedisProduct, getAllProduct);
+router.get("/:id", generalAuthor, getProductByIdRedis, getProductById);
+router.get("/:id", generalAuthor, getProductById);
 router.get("/search/:keyword", getProductByName);
 
 //POST
-router.post("/", upload.single("product_img"), postProduct);
+router.post("/", generalAuthor, uploadImage, postProduct);
 
-router.patch("/:id", clearDataProductRedis, patchProduct);
+router.patch("/:id", generalAuthor, clearDataRedis, patchProduct);
 
-router.delete("/:id", clearDataProductRedis, deleteProduct);
+router.delete("/:id", clearProductRedis, deleteProduct);
 
 module.exports = router;
 

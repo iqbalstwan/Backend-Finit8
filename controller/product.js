@@ -12,6 +12,8 @@ const { request, response } = require("express");
 const qs = require("querystring");
 const product = require("../model/product");
 const { get } = require("http");
+
+const fs = require("fs");
 const redis = require("redis");
 const client = redis.createClient();
 
@@ -82,19 +84,32 @@ module.exports = {
     // console.log(pageInfo)
     try {
       const result = await getProduct(search, sort, limit, offset);
-      //proses set data result ke redis
-      client.set(
-        `getproduct:${JSON.stringify(request.query)}`,
-        JSON.stringify(result)
-      );
-      // console.log(result);
-      return helper.response(
-        response,
-        200,
-        "Succes get product",
-        result,
-        pageInfo
-      );
+      if (result.length > 0) {
+        const newResult = {
+          data: result,
+          page: pageInfo,
+        };
+        client.set(
+          `getproduct:${JSON.stringify(request.query)}`,
+          JSON.stringify(newResult)
+        );
+        // console.log(result);
+        return helper.response(
+          response,
+          200,
+          "Succes get product",
+          result,
+          pageInfo
+        );
+      } else {
+        return helper.response(
+          response,
+          404,
+          "Product not found",
+          result,
+          pageInfo
+        );
+      }
     } catch (error) {
       return helper.response(response, 400, "Bad Request", error);
     }
@@ -105,8 +120,9 @@ module.exports = {
       //sama aja
       const { id } = request.params;
       const result = await getProductById(id);
-      client.set(`getproductbyid:${id}`, 3600, JSON.stringify(result));
+
       if (result.length > 0) {
+        client.setex(`getproductbyid:${id}`, 3600, JSON.stringify(result));
         return helper.response(
           response,
           200,
@@ -114,7 +130,11 @@ module.exports = {
           result
         );
       } else {
-        return helper.response(response, 404, "Not Found");
+        return helper.response(
+          response,
+          404,
+          `Product By Id : ${id} Not Found`
+        );
       }
     } catch (error) {
       return helper.response(response, 400, "Bad Request", error);
@@ -185,35 +205,57 @@ module.exports = {
         category_id,
         product_name,
         product_price,
-        product_img,
         product_status,
       } = request.body;
       const setData = {
         category_id,
         product_name,
         product_price,
-        product_img,
-        product_created_at: new Date(),
+        product_img: request.file === undefined ? "" : request.file.filename,
+        product_update_at: new Date(),
         product_status,
       };
+
       const checkId = await getProductById(id);
+      // console.log(checkId);
+      // // const img = checkId[0].product_img;
       if (checkId.length > 0) {
+        //   // fs.unlink(`./uploads/${img}`, async (error) => {
+        //   //   if (error) {
+        //   //     throw error;
+        //   //   } else {
         const result = await patchProduct(setData, id);
-        return helper.response(response, 200, "Patch Done", result);
-      } else {
-        return helper.response(response, 404, "Not found", result);
+        console.log(result);
+        // return helper.response(response, 201, "Patch Done", result);
+        // }
+        //   });
+        // } else {
+        //   return helper.response(response, 404, ` Not Found`);
       }
     } catch (error) {
-      return helper.response(response, 400, "Bad Request", error);
+      // return helper.response(response, 400, "Bad Request", error);
+      console.log(error);
     }
   },
   deleteProduct: async (request, response) => {
     try {
       const { id } = request.params;
-      const result = await deleteProduct(id);
-      return helper.response(response, 200, "Delete Done", result);
+      const checkId = await getProductById(id);
+      if (checkId.length > 0) {
+        fs.unlink(`./uploads/${checkId[0].product_img}`, async (error) => {
+          if (error) {
+            throw error;
+          } else {
+            const result = await deleteProduct(id);
+            return helper.response(response, 201, "Product Deleted", result);
+          }
+        });
+      } else {
+        return helper.response(response, 404, ` Not Found`);
+      }
     } catch (error) {
-      return helper.response(response, 400, "Bad Request", error);
+      // return helper.response(response, 400, "Bad Request", error);
+      console.log(error);
     }
   },
 };
