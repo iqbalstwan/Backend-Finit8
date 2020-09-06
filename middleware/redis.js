@@ -26,7 +26,6 @@ module.exports = {
     const { id } = request.params;
     client.get(`getproductbyid:${id}`, (error, result) => {
       if (!error && result != null) {
-        // console.log("find your data in redis");
         return helper.response(
           response,
           200,
@@ -34,7 +33,6 @@ module.exports = {
           JSON.parse(result)
         ); //mengambil dari json stringyfy
       } else {
-        // console.log("not found your data in redis");
         next();
       }
     });
@@ -44,10 +42,8 @@ module.exports = {
   getRedisCategory: (request, response, next) => {
     client.get("getcategory", (error, result) => {
       if (!error && result != null) {
-        console.log("find your category in redis");
         return helper.response(response, 200, JSON.parse(result)); //mengambil dari json stringyfy
       } else {
-        console.log("not found your data in redis");
         next();
       }
     });
@@ -56,10 +52,8 @@ module.exports = {
     const { id } = request.params;
     client.get("getcategorybyid", (error, result) => {
       if (!error && result != null) {
-        console.log("find your category in redis");
         return helper.response(response, 200, JSON.parse(result)); //mengambil dari json stringyfy
       } else {
-        console.log("not found your data in redis");
         next();
       }
     });
@@ -69,10 +63,8 @@ module.exports = {
   getRedisOrder: (request, response, next) => {
     client.get("getorder", (error, result) => {
       if (!error && result != null) {
-        console.log("find your category in redis");
         return helper.response(response, 200, JSON.parse(result)); //mengambil dari json stringyfy
       } else {
-        console.log("not found your data in redis");
         next();
       }
     });
@@ -81,10 +73,8 @@ module.exports = {
     const { id } = request.params;
     client.get("getorderbyid", (error, result) => {
       if (!error && result != null) {
-        console.log("find your category in redis");
         return helper.response(response, 200, JSON.parse(result)); //mengambil dari json stringyfy
       } else {
-        console.log("not found your data in redis");
         next();
       }
     });
@@ -94,10 +84,8 @@ module.exports = {
   getRedisHistory: (request, response, next) => {
     client.get("gethistory", (error, result) => {
       if (!error && result != null) {
-        console.log("find your category in redis");
         return helper.response(response, 200, JSON.parse(result)); //mengambil dari json stringyfy
       } else {
-        console.log("not found your data in redis");
         next();
       }
     });
@@ -106,15 +94,77 @@ module.exports = {
     const { id } = request.params;
     client.get("getcategorybyid", (error, result) => {
       if (!error && result != null) {
-        console.log("find your category in redis");
         return helper.response(response, 200, JSON.parse(result)); //mengambil dari json stringyfy
       } else {
-        console.log("not found your data in redis");
+        next();
+      }
+    });
+  },
+  getRedisDayIncome: (request, response, next) => {
+    client.get("getdayincome", (error, result) => {
+      if (!error && result != null) {
+        return helper.response(response, 200, JSON.parse(result)); //mengambil dari json stringyfy
+      } else {
+        next();
+      }
+    });
+  },
+  getRedisWeekCount: (request, response, next) => {
+    client.get("getweekcount", (error, result) => {
+      if (!error && result != null) {
+        return helper.response(response, 200, JSON.parse(result)); //mengambil dari json stringyfy
+      } else {
+        next();
+      }
+    });
+  },
+  getRedisYearsIncome: (request, response, next) => {
+    client.get("getyearsincome", (error, result) => {
+      if (!error && result != null) {
+        return helper.response(response, 200, JSON.parse(result)); //mengambil dari json stringyfy
+      } else {
+        next();
+      }
+    });
+  },
+  getRedisRecentOrder: (request, response, next) => {
+    client.get("getrecentorder", (error, result) => {
+      if (!error && result != null) {
+        return helper.response(response, 200, JSON.parse(result)); //mengambil dari json stringyfy
+      } else {
+        next();
+      }
+    });
+  },
+  getRedisOrderWeek: (request, response, next) => {
+    client.get("getorderweek", (error, result) => {
+      if (!error && result != null) {
+        return helper.response(response, 200, JSON.parse(result)); //mengambil dari json stringyfy
+      } else {
+        next();
+      }
+    });
+  },
+  getRedisOrderMonth: (request, response, next) => {
+    client.get("getordermonth", (error, result) => {
+      if (!error && result != null) {
+        return helper.response(response, 200, JSON.parse(result)); //mengambil dari json stringyfy
+      } else {
+        next();
+      }
+    });
+  },
+  getRedisChart: (request, response, next) => {
+    client.get("getchart", (error, result) => {
+      if (!error && result != null) {
+        return helper.response(response, 200, JSON.parse(result)); //mengambil dari json stringyfy
+      } else {
         next();
       }
     });
   },
 
+  //ALL CLEAR
   clearProductRedis: (request, response, next) => {
     client.keys("getproduct*", (err, keys) => {
       if (keys.length > 0) {

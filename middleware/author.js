@@ -40,9 +40,17 @@ module.exports = {
         ) {
           return helper.response(response, 403, error.message);
         } else {
-          console.log(result);
-          request.token = result;
-          next();
+          if (result.user_status === 1) {
+            console.log(result);
+            request.token = result;
+            next();
+          } else {
+            return helper.response(
+              response,
+              404,
+              "Please, Contact Your Administrator"
+            );
+          }
         }
       });
       console.log(token);

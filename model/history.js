@@ -74,6 +74,26 @@ module.exports = {
       );
     });
   },
+  getOrderWeek: () => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        "SELECT * FROM history WHERE WEEK(history_created_at) = WEEK(NOW())",
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error));
+        }
+      );
+    });
+  },
+  getOrderMonth: () => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        "SELECT * FROM history WHERE MONTH(history_created_at) = MONTH(NOW())",
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error));
+        }
+      );
+    });
+  },
   getChart: () => {
     return new Promise((resolve, reject) => {
       connection.query(

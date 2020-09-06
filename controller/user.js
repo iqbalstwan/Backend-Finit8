@@ -16,7 +16,6 @@ module.exports = {
     const { user_email, user_password, user_name } = request.body;
     const salt = bcrypt.genSaltSync(8); //(8)berapa kali password diacak
     const encryptPassword = bcrypt.hashSync(user_password, salt);
-    //kondisi jika email sama tidak bisa
     const checkEmail = await checkUser(user_email);
     if (checkEmail.length > 0) {
       return helper.response(response, 400, "Your email is already taken");
@@ -33,16 +32,8 @@ module.exports = {
       try {
         if (user_password.length < 8) {
           return helper.response(response, 400, "Minimum Eight Characters");
-        } else if (
-          user_password.match(
-            "^(?=.*[A-Za-z])(?=.*d)(?=.*[@$!%*#?&])[A-Za-zd@$!%*#?&]{8,}$"
-          )
-        ) {
-          return helper.response(
-            response,
-            400,
-            "Please enter a password contain At least one uppercase.At least one lower case.At least one special character."
-          );
+        } else if (!user_email.match("@")) {
+          return helper.response(response, 400, "Invalid,Missing Character.");
         } else if (user_email === "") {
           return helper.response(response, 400, "Input Email,Please");
         } else if (user_name === "") {
@@ -64,7 +55,6 @@ module.exports = {
   },
   loginUser: async (request, response) => {
     const { user_email, user_password } = request.body;
-    // console.log(user_email);
     const checkDataUser = await checkUser(user_email);
     // console.log(checkDataUser);
     if (checkDataUser.length >= 1) {
@@ -87,7 +77,7 @@ module.exports = {
           user_email,
           user_name,
           user_role,
-          user_status,
+          user_status: 1,
         };
         const token = jwt.sign(payload, "Secret", { expiresIn: "24h" });
         payload = { ...payload, token };
@@ -122,10 +112,13 @@ module.exports = {
   },
   patchUser: async (request, response) => {
     try {
+      const salt = bcrypt.genSaltSync(8);
+      const encryptPassword = bcrypt.hashSync(request.body.user_password, salt);
       const { id } = request.params;
       const { user_email, user_status } = request.body;
       const setData = {
         user_email,
+        user_password: encryptPassword,
         user_updated_at: new Date(),
         user_status,
       };

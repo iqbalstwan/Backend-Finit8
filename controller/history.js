@@ -7,6 +7,8 @@ const {
   getHistoryYears,
   getChart,
   getRecentOrder,
+  getOrderWeek,
+  getOrderMonth,
   postHistory,
   patchHistory,
 } = require("../model/history");
@@ -145,22 +147,36 @@ module.exports = {
     try {
       // console.log(`getDay`);
       const result = await getHistoryDay();
+      client.set(
+        `getdayincome:${JSON.stringify(request.query)}`,
+        JSON.stringify(result)
+      );
       return helper.response(response, 200, "Succes Get History", result);
     } catch (error) {
-      return helper.response(response, 400, "Bad Request", error);
+      // return helper.response(response, 400, "Bad Request", error);
+      console.log(error);
     }
   },
   getHistoryWeek: async (request, response) => {
     try {
       const result = await getHistoryWeek();
+      client.set(
+        `getweekcount:${JSON.stringify(request.query)}`,
+        JSON.stringify(result)
+      );
       return helper.response(response, 200, "Succes Get History", result);
     } catch (error) {
-      return helper.response(response, 400, "Bad Request", error);
+      // return helper.response(response, 400, "Bad Request", error);
+      console.log(error);
     }
   },
   getHistoryYears: async (request, response) => {
     try {
       const result = await getHistoryYears();
+      client.set(
+        `getyearsincome:${JSON.stringify(request.query)}`,
+        JSON.stringify(result)
+      );
       return helper.response(response, 200, "Succes Get History", result);
     } catch (error) {
       return helper.response(response, 400, "Bad Request", error);
@@ -169,10 +185,44 @@ module.exports = {
   getRecentOrder: async (request, response) => {
     try {
       const result = await getRecentOrder();
+      client.set(
+        `getrecentorder:${JSON.stringify(request.query)}`,
+        JSON.stringify(result)
+      );
       for (let i = 0; i < result.length; i++) {
         result[i].orders = await getOrderByHistory(result[i].history_id);
       }
-      return helper.response(response, 200, "Success Get Order", result);
+      return helper.response(response, 200, "Success Get History", result);
+    } catch (error) {
+      return helper.response(response, 400, "Bad Request", error);
+    }
+  },
+  getOrderWeek: async (request, response) => {
+    try {
+      const result = await getOrderWeek();
+      client.set(
+        `getorderweek:${JSON.stringify(request.query)}`,
+        JSON.stringify(result)
+      );
+      for (let i = 0; i < result.length; i++) {
+        result[i].orders = await getOrderByHistory(result[i].history_id);
+      }
+      return helper.response(response, 200, "Success Get History", result);
+    } catch (error) {
+      return helper.response(response, 400, "Bad Request", error);
+    }
+  },
+  getOrderMonth: async (request, response) => {
+    try {
+      const result = await getOrderMonth();
+      client.set(
+        `getordermonth:${JSON.stringify(request.query)}`,
+        JSON.stringify(result)
+      );
+      for (let i = 0; i < result.length; i++) {
+        result[i].orders = await getOrderByHistory(result[i].history_id);
+      }
+      return helper.response(response, 200, "Success Get History", result);
     } catch (error) {
       return helper.response(response, 400, "Bad Request", error);
     }
@@ -180,6 +230,10 @@ module.exports = {
   getChart: async (request, response) => {
     try {
       const result = await getChart();
+      client.set(
+        `getchart:${JSON.stringify(request.query)}`,
+        JSON.stringify(result)
+      );
       return helper.response(response, 200, "Succes", result);
     } catch (error) {
       return helper.response(response, 400, "Bad Request", error);

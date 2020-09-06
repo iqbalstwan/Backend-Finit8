@@ -26,11 +26,11 @@ router.get("/:id", generalAuthor, getProductById);
 router.get("/search/:keyword", getProductByName);
 
 //POST
-router.post("/", generalAuthor, uploadImage, postProduct);
+router.post("/", adminAuthor, uploadImage, postProduct);
 
-router.patch("/:id", generalAuthor, clearDataRedis, patchProduct);
+router.patch("/:id", adminAuthor, uploadImage, clearProductRedis, patchProduct);
 
-router.delete("/:id", clearProductRedis, deleteProduct);
+router.delete("/:id", adminAuthor, clearProductRedis, deleteProduct);
 
 module.exports = router;
 

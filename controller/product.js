@@ -215,23 +215,29 @@ module.exports = {
         product_update_at: new Date(),
         product_status,
       };
-
+      // console.log(setData);
+      // console.log(request.body);
+      // if (setData.category_id === null) {
+      //   return helper.response(response, 404, ` input ID!`);
+      // } else {
       const checkId = await getProductById(id);
       // console.log(checkId);
-      // // const img = checkId[0].product_img;
+      const img = checkId[0].product_img;
+      console.log(checkId);
       if (checkId.length > 0) {
-        //   // fs.unlink(`./uploads/${img}`, async (error) => {
-        //   //   if (error) {
-        //   //     throw error;
-        //   //   } else {
-        const result = await patchProduct(setData, id);
-        console.log(result);
-        // return helper.response(response, 201, "Patch Done", result);
-        // }
-        //   });
-        // } else {
-        //   return helper.response(response, 404, ` Not Found`);
+        fs.unlink(`./uploads/${img}`, async (error) => {
+          if (error) {
+            throw error;
+          } else {
+            const result = await patchProduct(setData, id);
+            // console.log(result);
+            return helper.response(response, 201, "Patch Done", result);
+          }
+        });
+      } else {
+        return helper.response(response, 404, ` Not Found`);
       }
+      // }
     } catch (error) {
       // return helper.response(response, 400, "Bad Request", error);
       console.log(error);
