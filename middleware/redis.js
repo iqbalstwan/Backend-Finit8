@@ -164,6 +164,26 @@ module.exports = {
     });
   },
 
+  //USER
+  getRedisUser: (request, response, next) => {
+    client.get("getuser", (error, result) => {
+      if (!error && result != null) {
+        return helper.response(response, 200, JSON.parse(result)); //mengambil dari json stringyfy
+      } else {
+        next();
+      }
+    });
+  },
+  getRedisUserById: (request, response, next) => {
+    client.get("getuserbyid", (error, result) => {
+      if (!error && result != null) {
+        return helper.response(response, 200, JSON.parse(result)); //mengambil dari json stringyfy
+      } else {
+        next();
+      }
+    });
+  },
+
   //ALL CLEAR
   clearProductRedis: (request, response, next) => {
     client.keys("getproduct*", (err, keys) => {

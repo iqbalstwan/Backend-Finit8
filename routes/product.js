@@ -23,7 +23,7 @@ const uploadImage = require("../middleware/multerHelp");
 router.get("/", generalAuthor, getRedisProduct, getAllProduct);
 router.get("/:id", generalAuthor, getProductByIdRedis, getProductById);
 router.get("/:id", generalAuthor, getProductById);
-router.get("/search/:keyword", getProductByName);
+router.get("/search/:keyword", generalAuthor, getProductByName);
 
 //POST
 router.post("/", adminAuthor, uploadImage, postProduct);

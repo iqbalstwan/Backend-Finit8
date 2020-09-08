@@ -125,7 +125,7 @@ module.exports = {
       //sama aja
       const { id } = request.params;
       let result = await getHistoryById(id);
-      client.setex(`gethistorybyid:${id}`, 3600, JSON.stringify(result));
+      client.setex(`gethistorybyid:${id}`, 1800, JSON.stringify(result));
       for (let i = 0; i < result.length; i++) {
         result[i].orders = await getOrderByHistory(result[i].history_id);
       }

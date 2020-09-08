@@ -10,6 +10,9 @@ const {
   deleteUser,
 } = require("../model/user");
 
+const redis = require("redis");
+const client = redis.createClient();
+
 module.exports = {
   registerUser: async (request, response) => {
     console.log(request.body);
@@ -56,7 +59,6 @@ module.exports = {
   loginUser: async (request, response) => {
     const { user_email, user_password } = request.body;
     const checkDataUser = await checkUser(user_email);
-    // console.log(checkDataUser);
     if (checkDataUser.length >= 1) {
       // proses 2
       const checkPassword = bcrypt.compareSync(
@@ -77,9 +79,9 @@ module.exports = {
           user_email,
           user_name,
           user_role,
-          user_status: 1,
+          user_status,
         };
-        const token = jwt.sign(payload, "Secret", { expiresIn: "24h" });
+        const token = jwt.sign(payload, "Secret", { expiresIn: "2h" });
         payload = { ...payload, token };
         return helper.response(response, 200, "Success Login", payload);
       } else {
@@ -92,6 +94,10 @@ module.exports = {
   getAllUser: async (request, response) => {
     try {
       const result = await getAllUser();
+      client.set(
+        `getuser:${JSON.stringify(request.query)}`,
+        JSON.stringify(result)
+      );
       return helper.response(response, 200, "Succes get User", result);
     } catch (error) {
       return helper.response(response, 400, "Bad Request", error);
@@ -102,6 +108,7 @@ module.exports = {
       const { id } = request.params;
       const result = await getUserById(id);
       if (result.length > 0) {
+        client.setex(`getuserbyid:${id}`, 1800, JSON.stringify(result));
         return helper.response(response, 200, "Succes get User By Id", result);
       } else {
         return helper.response(response, 404, "Not Found");

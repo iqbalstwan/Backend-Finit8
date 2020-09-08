@@ -10,8 +10,8 @@ const {
 const { adminAuthor, generalAuthor } = require("../middleware/author");
 
 router.post("/register", registerUser);
+router.post("/login", loginUser);
 
-router.get("/login", loginUser);
 router.get("/", adminAuthor, getAllUser);
 router.get("/:id", adminAuthor, getUserById);
 

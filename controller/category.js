@@ -8,7 +8,6 @@ const {
 } = require("../model/category");
 const helper = require("../helper/indexhlp");
 const { request, response } = require("express");
-const category = require("../model/category");
 const qs = require("querystring");
 
 const redis = require("redis");
@@ -138,8 +137,14 @@ module.exports = {
         category_status,
         category_created_at: new Date(),
       };
-      const result = await postCategory(setData);
-      return helper.response(response, 201, "Category Created", result);
+      if (setData.category_name === "") {
+        return helper.response(response, 404, ` Input Category Name!`);
+      } else if (setData.category_status === "") {
+        return helper.response(response, 404, ` Input Category Status!`);
+      } else {
+        const result = await postCategory(setData);
+        return helper.response(response, 201, "Category Created", result);
+      }
     } catch (error) {
       return helper.response(response, 400, "Bad Request", error);
     }
@@ -155,12 +160,18 @@ module.exports = {
         category_status,
         category_update_at: new Date(),
       };
-      const checkId = await getCategoryById(id);
-      if (checkId.length > 0) {
-        const result = await patchCategory(setData, id);
-        return helper.response(response, 200, "Patch Done", result);
+      if (setData.category_name === "") {
+        return helper.response(response, 404, ` Input Category Name!`);
+      } else if (setData.category_status === "") {
+        return helper.response(response, 404, ` Input Category Status!`);
       } else {
-        return helper.response(response, 404, "Not found", result);
+        const checkId = await getCategoryById(id);
+        if (checkId.length > 0) {
+          const result = await patchCategory(setData, id);
+          return helper.response(response, 200, "Patch Done", result);
+        } else {
+          return helper.response(response, 404, "Not found", result);
+        }
       }
     } catch (error) {
       return helper.response(response, 400, "Bad Request", error);

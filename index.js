@@ -34,6 +34,8 @@ app.get("*", (request, response) => {
   response.status(404).send("Not found");
 });
 
-app.listen(3001, "127.0.0.1", () => {
-  console.log("Express app is listening on hots: 127.0.0.1 and port:3001 !");
+app.listen(process.env.PORT, process.env.IP, () => {
+  console.log(
+    `Express app is listening on hots: ${process.env.IP} and port:${process.env.PORT} !`
+  );
 });

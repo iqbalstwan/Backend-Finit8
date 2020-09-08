@@ -10,8 +10,8 @@ const {
 const helper = require("../helper/indexhlp");
 const { request, response } = require("express");
 const qs = require("querystring");
-const product = require("../model/product");
-const { get } = require("http");
+// const product = require("../model/product");
+// const { get } = require("http");
 
 const fs = require("fs");
 const redis = require("redis");
@@ -81,7 +81,6 @@ module.exports = {
       prevLink: prevLink && `http://127.0.0.1:3001/product? ${prevLink}`,
       nextLink: nextLink && `http://127.0.0.1:3001/product? ${nextLink}`,
     };
-    // console.log(pageInfo)
     try {
       const result = await getProduct(search, sort, limit, offset);
       if (result.length > 0) {
@@ -93,7 +92,6 @@ module.exports = {
           `getproduct:${JSON.stringify(request.query)}`,
           JSON.stringify(newResult)
         );
-        // console.log(result);
         return helper.response(
           response,
           200,
@@ -122,7 +120,7 @@ module.exports = {
       const result = await getProductById(id);
 
       if (result.length > 0) {
-        client.setex(`getproductbyid:${id}`, 3600, JSON.stringify(result));
+        client.setex(`getproductbyid:${id}`, 1800, JSON.stringify(result));
         return helper.response(
           response,
           200,
@@ -160,10 +158,8 @@ module.exports = {
           error
         );
       }
-      // console.log(result)
     } catch (error) {
-      // return helper.response(response, 400, 'Bad Request', error)
-      console.log(error);
+      return helper.response(response, 400, "Bad Request", error);
     }
   },
 
@@ -183,15 +179,25 @@ module.exports = {
         product_created_at: new Date(),
         product_status,
       };
-      // const setData = {
-      //     //kanan dari database dan kiri dari postman
-      //     product_nama: request.body.product_nama,
-      //     product_harga: request.body.product_harga,
-      //     product_created_at: new Date(),
-      //     product_status: request.body.product_status
-      // }
-      const result = await postProduct(setData);
-      return helper.response(response, 201, "Product Created", result);
+      if (setData.category_id === "") {
+        return helper.response(response, 404, ` Input ID!`);
+      } else if (setData.product_name === "") {
+        return helper.response(response, 404, ` Input Product Name!`);
+      } else if (setData.product_price === "") {
+        return helper.response(response, 404, ` Input Product Price!`);
+      } else if (setData.product_status === "") {
+        return helper.response(response, 404, ` Input Product Status!`);
+      } else {
+        // const setData = {
+        //     //kanan dari database dan kiri dari postman
+        //     product_nama: request.body.product_nama,
+        //     product_harga: request.body.product_harga,
+        //     product_created_at: new Date(),
+        //     product_status: request.body.product_status
+        // }
+        const result = await postProduct(setData);
+        return helper.response(response, 201, "Product Created", result);
+      }
     } catch (error) {
       return helper.response(response, 400, "Bad Request", error);
     }
@@ -215,32 +221,33 @@ module.exports = {
         product_update_at: new Date(),
         product_status,
       };
-      // console.log(setData);
-      // console.log(request.body);
-      // if (setData.category_id === null) {
-      //   return helper.response(response, 404, ` input ID!`);
-      // } else {
-      const checkId = await getProductById(id);
-      // console.log(checkId);
-      const img = checkId[0].product_img;
-      console.log(checkId);
-      if (checkId.length > 0) {
-        fs.unlink(`./uploads/${img}`, async (error) => {
-          if (error) {
-            throw error;
-          } else {
-            const result = await patchProduct(setData, id);
-            // console.log(result);
-            return helper.response(response, 201, "Patch Done", result);
-          }
-        });
+      if (setData.category_id === "") {
+        return helper.response(response, 404, ` Input ID!`);
+      } else if (setData.product_name === "") {
+        return helper.response(response, 404, ` Input Product Name!`);
+      } else if (setData.product_price === "") {
+        return helper.response(response, 404, ` Input Product Price!`);
+      } else if (setData.product_status === "") {
+        return helper.response(response, 404, ` Input Product Status!`);
       } else {
-        return helper.response(response, 404, ` Not Found`);
+        const checkId = await getProductById(id);
+        const img = checkId[0].product_img;
+        console.log(checkId);
+        if (checkId.length > 0) {
+          fs.unlink(`./uploads/${img}`, async (error) => {
+            if (error) {
+              throw error;
+            } else {
+              const result = await patchProduct(setData, id);
+              return helper.response(response, 201, "Patch Done", result);
+            }
+          });
+        } else {
+          return helper.response(response, 404, ` Not Found`);
+        }
       }
-      // }
     } catch (error) {
-      // return helper.response(response, 400, "Bad Request", error);
-      console.log(error);
+      return helper.response(response, 400, "Bad Request", error);
     }
   },
   deleteProduct: async (request, response) => {
@@ -260,8 +267,7 @@ module.exports = {
         return helper.response(response, 404, ` Not Found`);
       }
     } catch (error) {
-      // return helper.response(response, 400, "Bad Request", error);
-      console.log(error);
+      return helper.response(response, 400, "Bad Request", error);
     }
   },
 };

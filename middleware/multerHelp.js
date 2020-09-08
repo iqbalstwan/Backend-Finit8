@@ -1,4 +1,3 @@
-// fs = require("fs");
 const multer = require("multer");
 const helper = require("../helper/indexhlp");
 
@@ -14,10 +13,6 @@ const storage = multer.diskStorage({
   },
 });
 
-// const limits = {
-//   filesize: 1 * 3,
-// };
-
 const fileFilter = (request, file, callback) => {
   if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG)$/)) {
     return callback(
@@ -26,17 +21,10 @@ const fileFilter = (request, file, callback) => {
       ),
       false
     );
-  }
-  // else if (file.originalname.length > limits) {
-  //   return callback(new Error("Too Large"), false);
-  // }
-  else {
+  } else {
     callback(null, true);
   }
 };
-// const limits = {
-//   filesize: 10,
-// };
 
 let upload = multer({
   storage,
@@ -50,10 +38,8 @@ const uploadFilter = (request, response, next) => {
       return helper.response(response, 400, error.message);
     } else if (error) {
       return helper.response(response, 400, error.message);
-      // An unknown error occurred when uploading.
     }
     next();
-    // Everything went fine.
   });
 };
 
