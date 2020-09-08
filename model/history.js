@@ -1,5 +1,4 @@
 const connection = require("../config/mysql");
-// const { getHistoryById } = require("../controller/history")
 
 module.exports = {
   getAllHistory: (search, sort, limit, offset) => {

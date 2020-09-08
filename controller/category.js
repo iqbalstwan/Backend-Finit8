@@ -20,7 +20,7 @@ const getPrevLink = (page, currentQuery) => {
     };
     const resultPrevLink = { ...currentQuery, ...generatePage };
     return qs.stringify(resultPrevLink);
-    // console.log(qs.stringify(resultPrevLink)) //qs.stringify mengeluarkan object menjadi string
+    //qs.stringify mengeluarkan object menjadi string
   } else {
     return null;
   }
@@ -33,7 +33,7 @@ const getNextLink = (page, totalPage, currentQuery) => {
     };
     const resultNextLink = { ...currentQuery, ...generatePage };
     return qs.stringify(resultNextLink);
-    // console.log(qs.stringify(resultPrevLink)) //qs.stringify mengeluarkan object menjadi string
+    //qs.stringify mengeluarkan object menjadi string
   } else {
     return null;
   }
@@ -87,7 +87,7 @@ module.exports = {
           `getcategory:${JSON.stringify(request.query)}`,
           JSON.stringify(newResult)
         );
-        // console.log(result);
+
         return helper.response(
           response,
           200,
@@ -105,8 +105,7 @@ module.exports = {
         );
       }
     } catch (error) {
-      // return helper.response(response, 400, "Bad Request", error);
-      console.log(error);
+      return helper.response(response, 400, "Bad Request", error);
     }
   },
   getCategoryById: async (request, response) => {

@@ -88,12 +88,9 @@ module.exports = {
           totalPrice,
           subTotal,
         };
-        // console.log(info)
-        //   console.log(request.body);
         return helper.response(response, 201, "Yap, Order Created", info);
       });
     } catch (error) {
-      // console.log(error)
       return helper.response(response, 400, "Bad Request", error);
     }
   },

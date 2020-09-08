@@ -33,7 +33,3 @@ router.patch("/:id", adminAuthor, uploadImage, clearProductRedis, patchProduct);
 router.delete("/:id", adminAuthor, clearProductRedis, deleteProduct);
 
 module.exports = router;
-
-// app.listen(3001, "127.0.0.1", () => {
-//   console.log("express app is listening on hots: 127.0.0.1 and port:3001 !");
-// });

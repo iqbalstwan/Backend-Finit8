@@ -53,7 +53,7 @@ module.exports = {
       );
     });
   },
-  // ==========================================
+
   patchCategory: (setData, id) => {
     return new Promise((resolve, reject) => {
       connection.query(

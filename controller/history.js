@@ -28,7 +28,7 @@ const getPrevLink = (page, currentQuery) => {
     };
     const resultPrevLink = { ...currentQuery, ...generatePage };
     return qs.stringify(resultPrevLink);
-    // console.log(qs.stringify(resultPrevLink)) //qs.stringify mengeluarkan object menjadi string
+    //qs.stringify mengeluarkan object menjadi string
   } else {
     return null;
   }
@@ -41,7 +41,6 @@ const getNextLink = (page, totalPage, currentQuery) => {
     };
     const resultNextLink = { ...currentQuery, ...generatePage };
     return qs.stringify(resultNextLink);
-    // console.log(qs.stringify(resultPrevLink)) //qs.stringify mengeluarkan object menjadi string
   } else {
     return null;
   }
@@ -115,14 +114,12 @@ module.exports = {
         );
       }
     } catch (error) {
-      console.log(error);
-      // return helper.response(response, 400, "Bad Request", error);
+      return helper.response(response, 400, "Bad Request", error);
     }
   },
   getHistoryById: async (request, response) => {
     try {
       //    const id = request.params.id
-      //sama aja
       const { id } = request.params;
       let result = await getHistoryById(id);
       client.setex(`gethistorybyid:${id}`, 1800, JSON.stringify(result));
@@ -145,7 +142,6 @@ module.exports = {
   },
   getHistoryDay: async (request, response) => {
     try {
-      // console.log(`getDay`);
       const result = await getHistoryDay();
       client.set(
         `getdayincome:${JSON.stringify(request.query)}`,
@@ -153,8 +149,7 @@ module.exports = {
       );
       return helper.response(response, 200, "Succes Get History", result);
     } catch (error) {
-      // return helper.response(response, 400, "Bad Request", error);
-      console.log(error);
+      return helper.response(response, 400, "Bad Request", error);
     }
   },
   getHistoryWeek: async (request, response) => {
@@ -166,8 +161,7 @@ module.exports = {
       );
       return helper.response(response, 200, "Succes Get History", result);
     } catch (error) {
-      // return helper.response(response, 400, "Bad Request", error);
-      console.log(error);
+      return helper.response(response, 400, "Bad Request", error);
     }
   },
   getHistoryYears: async (request, response) => {
@@ -247,8 +241,12 @@ module.exports = {
         history_subTotal,
       };
       const result = await postHistory(setData);
-      console.log(result);
-      // return helper.response(response, 201, "History Created",result.history_id)
+      return helper.response(
+        response,
+        201,
+        "History Created",
+        result.history_id
+      );
     } catch (error) {
       return helper.response(response, 400, "Bad Request", error);
     }

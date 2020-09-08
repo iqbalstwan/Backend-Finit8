@@ -69,7 +69,7 @@ module.exports = {
       );
     });
   },
-  // ==========================================
+
   patchProduct: (setData, id) => {
     return new Promise((resolve, reject) => {
       connection.query(
