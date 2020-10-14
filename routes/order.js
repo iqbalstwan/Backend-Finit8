@@ -14,7 +14,7 @@ router.get("/", generalAuthor, getRedisOrder, getAllOrder);
 router.get("/:id", generalAuthor, getOrderByIdRedis, getOrderById);
 
 //POST
-router.post("/", adminAuthor, postOrder);
+router.post("/", generalAuthor, postOrder);
 router.patch("/:id", adminAuthor, clearOrderRedis, postOrder);
 
 module.exports = router;

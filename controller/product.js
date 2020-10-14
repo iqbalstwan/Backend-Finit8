@@ -183,6 +183,8 @@ module.exports = {
         return helper.response(response, 404, ` Input ID!`);
       } else if (setData.product_name === "") {
         return helper.response(response, 404, ` Input Product Name!`);
+      } else if (setData.product_img === "") {
+        return setData.product_img === "placeholder.png";
       } else if (setData.product_price === "") {
         return helper.response(response, 404, ` Input Product Price!`);
       } else if (setData.product_status === "") {
@@ -225,6 +227,8 @@ module.exports = {
         return helper.response(response, 404, ` Input ID!`);
       } else if (setData.product_name === "") {
         return helper.response(response, 404, ` Input Product Name!`);
+      } else if (setData.product_img === "") {
+        return helper.response(response, 404, ` Select Image!`);
       } else if (setData.product_price === "") {
         return helper.response(response, 404, ` Input Product Price!`);
       } else if (setData.product_status === "") {

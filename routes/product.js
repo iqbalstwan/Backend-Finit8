@@ -26,7 +26,7 @@ router.get("/:id", generalAuthor, getProductById);
 router.get("/search/:keyword", generalAuthor, getProductByName);
 
 //POST
-router.post("/", adminAuthor, uploadImage, postProduct);
+router.post("/", adminAuthor, uploadImage, clearProductRedis, postProduct);
 
 router.patch("/:id", adminAuthor, uploadImage, clearProductRedis, patchProduct);
 
