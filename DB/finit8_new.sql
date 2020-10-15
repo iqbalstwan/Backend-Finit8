@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Waktu pembuatan: 15 Okt 2020 pada 15.14
+-- Waktu pembuatan: 15 Okt 2020 pada 15.40
 -- Versi server: 10.4.13-MariaDB
 -- Versi PHP: 7.2.31
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `Finit8-pos`
+-- Database: `finit8_new`
 --
 
 -- --------------------------------------------------------
