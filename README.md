@@ -33,7 +33,7 @@ Open .env file on your favorite code editor, and copy paste this code below :
 DB_HOST = localhost        // DB Host
 DB_USER = root            // DB User
 DB_PASS =                // DB Pass
-DB_BASE = online-shop   // DB Name
+DB_BASE = finit8-new    // DB Name
 IP = 127.0.0.1         // IP
 PORT = 3001           // PORT
 
@@ -103,3 +103,7 @@ PORT = 3001           // PORT
 - `/product/:id` (Delete product by id)
 - `/category/:id` (Delete product by id)
 - `/user/:id` (Delete product by id)
+
+### License
+
+&#169; Iqbal Setiawan
