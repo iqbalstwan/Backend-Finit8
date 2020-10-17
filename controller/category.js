@@ -168,7 +168,7 @@ module.exports = {
         const checkId = await getCategoryById(id);
         if (checkId.length > 0) {
           const result = await patchCategory(setData, id);
-          return helper.response(response, 200, "Patch Done", result);
+          return helper.response(response, 200, "Category Done", result);
         } else {
           return helper.response(response, 404, "Not found", result);
         }
@@ -181,7 +181,7 @@ module.exports = {
     try {
       const { id } = request.params;
       const result = await deleteCategory(id);
-      return helper.response(response, 200, "Delete Done", result);
+      return helper.response(response, 200, "Delete Success", result);
     } catch (error) {
       return helper.response(response, 400, "Bad Request", error);
     }

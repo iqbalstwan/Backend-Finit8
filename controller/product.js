@@ -184,7 +184,7 @@ module.exports = {
       } else if (setData.product_name === "") {
         return helper.response(response, 404, ` Input Product Name!`);
       } else if (setData.product_img === "") {
-        return setData.product_img === "placeholder.png";
+        return helper.response(response, 404, ` Select Image!`);
       } else if (setData.product_price === "") {
         return helper.response(response, 404, ` Input Product Price!`);
       } else if (setData.product_status === "") {
@@ -243,7 +243,7 @@ module.exports = {
               throw error;
             } else {
               const result = await patchProduct(setData, id);
-              return helper.response(response, 201, "Patch Done", result);
+              return helper.response(response, 201, "Product Updated", result);
             }
           });
         } else {

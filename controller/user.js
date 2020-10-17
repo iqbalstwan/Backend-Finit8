@@ -132,7 +132,7 @@ module.exports = {
       const checkId = await getUserById(id);
       if (checkId.length > 0) {
         const result = await patchUser(setData, id);
-        return helper.response(response, 200, "Patch Done", result);
+        return helper.response(response, 200, "User Updated", result);
       } else {
         return helper.response(response, 404, `Data with id:${id}, not found`);
       }
