@@ -41,7 +41,7 @@ PORT = 3001           // PORT
 
 ## End Point
 
-**See Documentation API [Here](https://www.getpostman.com/collections/d42b4683864093ec402f)**
+**See Documentation API [Here](https://documenter.getpostman.com/view/12322442/TVRrV4ZT)**
 
 **1. GET**
 
