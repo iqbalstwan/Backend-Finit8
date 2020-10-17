@@ -1,6 +1,6 @@
 <h1 align="center">ExpressJS - Finit8 RESTfull API</h1>
 
-This project name called FINIT8. [More about Express](https://en.wikipedia.org/wiki/Express.js)
+This project name called Finit8, it means you can Find all menu infinity in this application. Finit8 is POS-app(point-of-sales) based on website application, especially designed to make your business easier. Finit8 can manage multiple orders at the same time and you can overview the report from history. [More about Express](https://en.wikipedia.org/wiki/Express.js)
 
 ## Built With
 
